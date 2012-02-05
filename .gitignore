@@ -30,3 +30,10 @@ lib*dll.def
 /pgsql.sln.cache
 /Debug/
 /Release/
+.cproject
+.project
+/DemoDir
+/bin
+/include
+/lib
+/share
