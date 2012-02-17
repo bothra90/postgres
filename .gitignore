@@ -37,3 +37,5 @@ lib*dll.def
 /include
 /lib
 /share
+tags
+src/
