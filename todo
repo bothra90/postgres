@@ -1,0 +1,12 @@
+TODO
+
+- copy ViewStmt in gram.y as MatViewStmt
+- Store materialized view as table
+- Prevent listing materialized view when enumerating tables of a database
+- PG_PARSE_QUERY in postgres.c calls raw_parser in parser.c
+- make matview.c analogous to view.c
+- include defintions of functions to be used in utility.c (define matview etc.)
+- CreateCommandTag constructs the command (commandTag object)
+- main processing fuction is execSimpleQuery
+    - uses pg_parse_query for parsing the query string (produces parsetree_list)
+    - CreateCommandTag uses parsetree_list

@@ -7288,6 +7288,32 @@ ViewStmt: CREATE OptTemp VIEW qualified_name opt_column_list
 					$$ = (Node *) n;
 				}
 		;
+/*
+changed
+*/
+MatViewStmt: CREATE OptTemp MATVIEW qualified_name opt_column_list
+                AS SelectStmt opt_check_option
+                {
+                    MatViewStmt *n = makeNode(ViewStmt);
+                    n->view = $4;
+                    n->view->relpersistence = $2;
+                    n->aliases = $5;
+                    n->query = $7;
+                    n->replace = false;
+                    $$ = (Node *) n;
+                }
+        | CREATE OR REPLACE OptTemp MATVIEW qualified_name opt_column_list
+                AS SelectStmt opt_check_option
+                {
+                    MatViewStmt *n = makeNode(ViewStmt);
+                    n->view = $6;
+                    n->view->relpersistence = $4;
+                    n->aliases = $7;
+                    n->query = $9;
+                    n->replace = true;
+                    $$ = (Node *) n;
+                }
+        ;
 
 opt_check_option:
 		WITH CHECK OPTION

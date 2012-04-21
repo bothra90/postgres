@@ -38,5 +38,4 @@ lib*dll.def
 /lib
 /share
 tags
-src/
 univ/
