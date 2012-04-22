@@ -10,3 +10,4 @@ TODO
 - main processing fuction is execSimpleQuery
     - uses pg_parse_query for parsing the query string (produces parsetree_list)
     - CreateCommandTag uses parsetree_list
+- add CREATE MATVIEW to help file
