@@ -915,6 +915,10 @@ standard_ProcessUtility(Node *parsetree,
 		case T_ViewStmt:		/* CREATE VIEW */
 			DefineView((ViewStmt *) parsetree, queryString);
 			break;
+			// Define "DefineMatView"
+	case T_MatViewStmt:		/* CREATE VIEW */
+	  DefineMatView((ViewStmt *) parsetree, queryString);
+	  break;
 
 		case T_CreateFunctionStmt:		/* CREATE FUNCTION */
 			CreateFunction((CreateFunctionStmt *) parsetree, queryString);
@@ -1895,6 +1899,10 @@ CreateCommandTag(Node *parsetree)
 			tag = "CREATE VIEW";
 			break;
 
+	case T_MatViewStmt:
+	  tag = "CREATE MATVIEW";
+	  break;
+			
 		case T_CreateFunctionStmt:
 			tag = "CREATE FUNCTION";
 			break;
@@ -2442,6 +2450,10 @@ GetCommandLogLevel(Node *parsetree)
 			lev = LOGSTMT_DDL;
 			break;
 
+		case T_MatViewStmt:
+			lev = LOGSTMT_DDL;
+			break;
+			
 		case T_CreateFunctionStmt:
 			lev = LOGSTMT_DDL;
 			break;

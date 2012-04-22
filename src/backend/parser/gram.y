@@ -216,7 +216,7 @@ static void processCASbits(int cas_bits, int location, const char *constrType,
 		DropUserStmt DropdbStmt DropTableSpaceStmt DropFdwStmt
 		DropForeignServerStmt DropUserMappingStmt ExplainStmt FetchStmt
 		GrantStmt GrantRoleStmt IndexStmt InsertStmt ListenStmt LoadStmt
-		LockStmt NotifyStmt ExplainableStmt PreparableStmt
+		LockStmt MatViewStmt NotifyStmt ExplainableStmt PreparableStmt
 		CreateFunctionStmt AlterFunctionStmt ReindexStmt RemoveAggrStmt
 		RemoveFuncStmt RemoveOperStmt RenameStmt RevokeStmt RevokeRoleStmt
 		RuleActionStmt RuleActionStmtOrEmpty RuleStmt
@@ -531,7 +531,7 @@ static void processCASbits(int cas_bits, int location, const char *constrType,
 	LEAST LEFT LEVEL LIKE LIMIT LISTEN LOAD LOCAL LOCALTIME LOCALTIMESTAMP
 	LOCATION LOCK_P
 
-	MAPPING MATCH MAXVALUE MINUTE_P MINVALUE MODE MONTH_P MOVE
+	MAPPING MATCH MATVIEW MAXVALUE MINUTE_P MINVALUE MODE MONTH_P MOVE
 
 	NAME_P NAMES NATIONAL NATURAL NCHAR NEXT NO NONE
 	NOT NOTHING NOTIFY NOTNULL NOWAIT NULL_P NULLIF
@@ -764,6 +764,7 @@ stmt :
 			| ListenStmt
 			| LoadStmt
 			| LockStmt
+			| MatViewStmt
 			| NotifyStmt
 			| PrepareStmt
 			| ReassignOwnedStmt
@@ -1194,6 +1195,7 @@ schema_stmt:
 			| CreateSeqStmt
 			| CreateTrigStmt
 			| GrantStmt
+			| MatViewStmt
 			| ViewStmt
 		;
 
@@ -7294,9 +7296,9 @@ changed
 MatViewStmt: CREATE OptTemp MATVIEW qualified_name opt_column_list
                 AS SelectStmt opt_check_option
                 {
-                    MatViewStmt *n = makeNode(ViewStmt);
-                    n->view = $4;
-                    n->view->relpersistence = $2;
+                    MatViewStmt *n = makeNode(MatViewStmt);
+                    n->matView = $4;
+                    n->matView->relpersistence = $2;
                     n->aliases = $5;
                     n->query = $7;
                     n->replace = false;
@@ -7305,9 +7307,9 @@ MatViewStmt: CREATE OptTemp MATVIEW qualified_name opt_column_list
         | CREATE OR REPLACE OptTemp MATVIEW qualified_name opt_column_list
                 AS SelectStmt opt_check_option
                 {
-                    MatViewStmt *n = makeNode(ViewStmt);
-                    n->view = $6;
-                    n->view->relpersistence = $4;
+                    MatViewStmt *n = makeNode(MatViewStmt);
+                    n->matView = $6;
+                    n->matView->relpersistence = $4;
                     n->aliases = $7;
                     n->query = $9;
                     n->replace = true;
@@ -11967,6 +11969,7 @@ unreserved_keyword:
 			| LOCK_P
 			| MAPPING
 			| MATCH
+			| MATVIEW
 			| MAXVALUE
 			| MINUTE_P
 			| MINVALUE

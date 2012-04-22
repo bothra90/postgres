@@ -1221,7 +1221,8 @@ typedef enum AlterTableType
 	AT_DropInherit,				/* NO INHERIT parent */
 	AT_AddOf,					/* OF <type_name> */
 	AT_DropOf,					/* NOT OF */
-	AT_GenericOptions			/* OPTIONS (...) */
+	AT_GenericOptions, /* OPTIONS (...) */
+	AT_AddColumnToMatView			/* implicitly via CREATE OR REPLACE MAT VIEW */
 } AlterTableType;
 
 typedef struct AlterTableCmd	/* one subcommand of an ALTER TABLE */
@@ -2337,6 +2338,21 @@ typedef struct ViewStmt
 	Node	   *query;			/* the SELECT query */
 	bool		replace;		/* replace an existing view? */
 } ViewStmt;
+
+/* ----------------------
+ *		Create MatView Statement
+ * ----------------------
+ */
+
+typedef struct MatViewStmt
+{
+	NodeTag		type;
+	RangeVar   *matView;			/* the view to be created */
+	List	   *aliases;		/* target column names */
+	Node	   *query;			/* the SELECT query */
+	bool		replace;		/* replace an existing view? */
+} MatViewStmt;
+
 
 /* ----------------------
  *		Load Statement

@@ -16,6 +16,7 @@
 
 /* The ON SELECT rule of a view is always named this: */
 #define ViewSelectRuleName	"_RETURN"
+#define MatViewSelectRuleName	"_RETURN"
 
 extern bool IsDefinedRewriteRule(Oid owningRel, const char *ruleName);
 
