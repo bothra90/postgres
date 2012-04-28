@@ -140,18 +140,18 @@ DATA(insert OID = 1259 (  pg_class		PGNSP 83 0 PGUID 0 0 0 0 0 0 0 f f p r 26 0 
 DESCR("");
 
 
-#define		  RELKIND_RELATION		  'r'		/* ordinary table */
-#define		  RELKIND_INDEX			  'i'		/* secondary index */
-#define		  RELKIND_SEQUENCE		  'S'		/* sequence object */
-#define		  RELKIND_TOASTVALUE	  't'		/* for out-of-line values */
-#define		  RELKIND_VIEW			  'v'		/* view */
-#define		  RELKIND_MAT_VIEW			  'm'		/* view */
-#define		  RELKIND_COMPOSITE_TYPE  'c'		/* composite type */
-#define		  RELKIND_FOREIGN_TABLE   'f'		/* foreign table */
-#define		  RELKIND_UNCATALOGED	  'u'		/* not yet cataloged */
+#define		  RELKIND_RELATION		'r'	/* ordinary table */
+#define		  RELKIND_INDEX			'i'	/* secondary index */
+#define		  RELKIND_SEQUENCE		'S'	/* sequence object */
+#define		  RELKIND_TOASTVALUE		't'	/* for out-of-line values */
+#define		  RELKIND_VIEW			'v'	/* view */
+#define		  RELKIND_MAT_VIEW		'm'	/* mat view */
+#define		  RELKIND_COMPOSITE_TYPE	'c'	/* composite type */
+#define		  RELKIND_FOREIGN_TABLE		'f'	/* foreign table */
+#define		  RELKIND_UNCATALOGED		'u'	/* not yet cataloged */
 
-#define		  RELPERSISTENCE_PERMANENT	'p'		/* regular table */
-#define		  RELPERSISTENCE_UNLOGGED	'u'		/* unlogged permanent table */
-#define		  RELPERSISTENCE_TEMP		't'		/* temporary table */
+#define		  RELPERSISTENCE_PERMANENT	'p'	/* regular table */
+#define		  RELPERSISTENCE_UNLOGGED	'u'	/* unlogged permanent table */
+#define		  RELPERSISTENCE_TEMP		't'	/* temporary table */
 
 #endif   /* PG_CLASS_H */

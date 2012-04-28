@@ -426,6 +426,7 @@ DefineView(ViewStmt *stmt, const char *queryString)
 	 * Since parse analysis scribbles on its input, copy the raw parse tree;
 	 * this ensures we don't corrupt a prepared statement, for example.
 	 */
+	// assert(1 == 0);
 	viewParse = parse_analyze((Node *) copyObject(stmt->query),
 							  queryString, NULL, 0);
 
