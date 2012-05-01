@@ -2638,7 +2638,7 @@ transformCreateSchemaStmt(CreateSchemaStmt *stmt)
 			case T_ViewStmt:
 				{
 					ViewStmt   *elp = (ViewStmt *) element;
-
+					printf("parse_utilcmd.c: 2641\n");
 					setSchemaName(cxt.schemaname, &elp->view->schemaname);
 
 					/*
