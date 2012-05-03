@@ -260,6 +260,7 @@ DefineMaterializedVirtualRelation(const RangeVar *relation, List *tlist, bool re
 		 * is false).
 		 */
 		relid = DefineRelation(createStmt, RELKIND_MAT_VIEW, InvalidOid);
+		printf("relkind is: %c\n", RELKIND_MAT_VIEW);
 		Assert(relid != InvalidOid);
 		return relid;
 	}
