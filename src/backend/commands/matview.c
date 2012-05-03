@@ -87,7 +87,7 @@ isMatViewOnTempTable_walker(Node *node, void *context)
 }
 
 /*---------------------------------------------------------------------
- * DefineVirtualRelation
+ * DefineMaterializedVirtualRelation
  *
  * Create the "matview" relation. `DefineRelation' does all the work,
  * we just provide the correct arguments ... at least when we're
@@ -96,7 +96,7 @@ isMatViewOnTempTable_walker(Node *node, void *context)
  *---------------------------------------------------------------------
  */
 static Oid
-DefineVirtualRelation(const RangeVar *relation, List *tlist, bool replace,
+DefineMaterializedVirtualRelation(const RangeVar *relation, List *tlist, bool replace,
 					  Oid namespaceId)
 {
 	Oid			matViewOid;
@@ -425,7 +425,11 @@ DefineMatView(MatViewStmt *stmt, const char *queryString)
 	 * Since parse analysis scribbles on its input, copy the raw parse tree;
 	 * this ensures we don't corrupt a prepared statement, for example.
 	 */
-	printf("matview.c (428): DefineMatView called\n");
+	printf("matview.c (428): DefineMatView called with \"%s\"\n", queryString);
+	ListCell * lc;
+	foreach(lc, ((SelectStmt *)(stmt -> query)) -> fromClause){
+	  printf("From Clause: %s\n", (char *) lc -> data.ptr_value);
+	}
 	// Assert(1 == 0);
 	matViewParse = parse_analyze((Node *) copyObject(stmt->query),
 							  queryString, NULL, 0);
@@ -508,12 +512,12 @@ DefineMatView(MatViewStmt *stmt, const char *queryString)
 	RangeVarAdjustRelationPersistence(matView, namespaceId);
 
 	/*
-	 * Create the view relation
+	 * Create the materialized view relation
 	 *
 	 * NOTE: if it already exists and replace is false, the xact will be
 	 * aborted.
 	 */
-	matViewOid = DefineVirtualRelation(matView, matViewParse->targetList,
+	matViewOid = DefineMaterializedVirtualRelation(matView, matViewParse->targetList,
 									stmt->replace, namespaceId);
 
 	/*

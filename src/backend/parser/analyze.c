@@ -180,7 +180,7 @@ transformStmt(ParseState *pstate, Node *parseTree)
 		case T_SelectStmt:
 			{
 				SelectStmt *n = (SelectStmt *) parseTree;
-
+				printf("analyze.c (183): transformStmt T_SelectStmt case %d\n", parseTree -> type);
 				if (n->valuesLists)
 					result = transformValuesClause(pstate, n);
 				else if (n->op == SETOP_NONE)

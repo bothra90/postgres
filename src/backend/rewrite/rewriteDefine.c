@@ -251,7 +251,8 @@ DefineQueryRewrite(char *rulename,
 	 * Verify relation is of a type that rules can sensibly be applied to.
 	 */
 	if (event_relation->rd_rel->relkind != RELKIND_RELATION &&
-		event_relation->rd_rel->relkind != RELKIND_VIEW)
+		event_relation->rd_rel->relkind != RELKIND_VIEW &&
+		event_relation->rd_rel->relkind != RELKIND_MAT_VIEW)
 		ereport(ERROR,
 				(errcode(ERRCODE_WRONG_OBJECT_TYPE),
 				 errmsg("\"%s\" is not a table or view",
