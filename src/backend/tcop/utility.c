@@ -644,6 +644,7 @@ standard_ProcessUtility(Node *parsetree,
 					case OBJECT_TABLE:
 					case OBJECT_SEQUENCE:
 					case OBJECT_VIEW:
+                    case OBJECT_MAT_VIEW:
 					case OBJECT_INDEX:
 					case OBJECT_FOREIGN_TABLE:
 						RemoveRelations(stmt);

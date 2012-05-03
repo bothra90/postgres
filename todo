@@ -11,3 +11,13 @@ TODO
     - uses pg_parse_query for parsing the query string (produces parsetree_list)
     - CreateCommandTag uses parsetree_list
 - add CREATE MATVIEW to help file
+
+
+- drop MV
+- implemet \dm
+- listing views should not list mv
+- edit definematerializedvirtualrelation
+-in function addnewrelationtuple in heap.c (add entry to pg_class )...need to specify that matview has space while view does not
+
+
+- changing pg_class.h requires make clean and make

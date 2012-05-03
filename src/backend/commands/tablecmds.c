@@ -692,7 +692,7 @@ DropErrorMsgWrongType(const char *relname, char wrongkind, char rightkind)
 /*
  * RemoveRelations
  *		Implements DROP TABLE, DROP INDEX, DROP SEQUENCE, DROP VIEW,
- *		DROP FOREIGN TABLE
+ *		DROP FOREIGN TABLE, DROP 
  */
 void
 RemoveRelations(DropStmt *drop)
@@ -726,12 +726,16 @@ RemoveRelations(DropStmt *drop)
 			relkind = RELKIND_VIEW;
 			break;
 
+        case OBJECT_MAT_VIEW:
+                relkind = RELKIND_MAT_VIEW;
+                break;
+
 		case OBJECT_FOREIGN_TABLE:
 			relkind = RELKIND_FOREIGN_TABLE;
 			break;
 
 		default:
-			elog(ERROR, "unrecognized drop object type: %d",
+			elog(ERROR, "(tablecmds.c:738 unrecognized drop object type: %d",
 				 (int) drop->removeType);
 			relkind = 0;		/* keep compiler quiet */
 			break;

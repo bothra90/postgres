@@ -425,7 +425,7 @@ DefineMatView(MatViewStmt *stmt, const char *queryString)
 	 * Since parse analysis scribbles on its input, copy the raw parse tree;
 	 * this ensures we don't corrupt a prepared statement, for example.
 	 */
-	printf("matview.c (428): DefineMatView called with \"%s\"\n", queryString);
+	/* printf("matview.c (428): DefineMatView called with \"%s\"\n", queryString); */
 	ListCell * lc;
 	foreach(lc, ((SelectStmt *)(stmt -> query)) -> fromClause){
 	  printf("From Clause: %s\n", (char *) lc -> data.ptr_value);

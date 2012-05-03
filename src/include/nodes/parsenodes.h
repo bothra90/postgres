@@ -1134,7 +1134,8 @@ typedef enum ObjectType
 	OBJECT_TSPARSER,
 	OBJECT_TSTEMPLATE,
 	OBJECT_TYPE,
-	OBJECT_VIEW
+	OBJECT_VIEW,
+    OBJECT_MAT_VIEW
 } ObjectType;
 
 /* ----------------------
