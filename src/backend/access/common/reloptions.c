@@ -1176,7 +1176,8 @@ heap_reloptions(char relkind, Datum reloptions, bool validate)
 			return (bytea *) rdopts;
 		case RELKIND_RELATION:
 			return default_reloptions(reloptions, validate, RELOPT_KIND_HEAP);
-		default:
+	default:
+	  printf("reloptions.c 1180: Default Case at heap_reloptions\n");
 			/* other relkinds are not supported */
 			return NULL;
 	}
