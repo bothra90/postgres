@@ -255,7 +255,7 @@ DefineQueryRewrite(char *rulename,
 		event_relation->rd_rel->relkind != RELKIND_MAT_VIEW)
 		ereport(ERROR,
 				(errcode(ERRCODE_WRONG_OBJECT_TYPE),
-				 errmsg("\"%s\" is not a table or view",
+				 errmsg("\"%s\" is not a table or view. I am here",
 						RelationGetRelationName(event_relation))));
 
 	if (!allowSystemTableMods && IsSystemRelation(event_relation))
