@@ -408,7 +408,7 @@ UpdateRangeTableOfMatViewParse(Oid matViewOid, Query *matViewParse)
 
 /*
  * DefineMatView
- *		Execute a CREATE MAT VIEW command.
+ *		Execute a CREATE MATVIEW command.
  */
 void
 DefineMatView(MatViewStmt *stmt, const char *queryString)

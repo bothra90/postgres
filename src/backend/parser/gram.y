@@ -7297,7 +7297,7 @@ changed
 MatViewStmt: CREATE OptTemp MATVIEW qualified_name opt_column_list
                 AS SelectStmt opt_check_option
 {
-  printf("gram.y 300: MatViewStmt detected\n");
+                    printf("gram.y 300: MatViewStmt detected\n");
                     MatViewStmt *n = makeNode(MatViewStmt);
                     n->matView = $4;
                     n->matView->relpersistence = $2;

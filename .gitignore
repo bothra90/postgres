@@ -39,3 +39,8 @@ lib*dll.def
 /share
 tags
 univ/
+db/
+.gitignore
+build/
+cscope.out
+*.pdf
