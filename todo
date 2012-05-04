@@ -25,3 +25,9 @@ TODO
 - view.c: 263
 - postgres.c : 574
  - analyze.c:84
+
+
+ - extension.c:742 ->executeSQLString
+ - execMain.c:initPlan, :132, :215 calls iniPlan which calls OpenIntoRel which which creates query 
+ description which is executed by executorRun called in extension.c:743 following executorStart
+
