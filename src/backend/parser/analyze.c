@@ -91,7 +91,6 @@ parse_analyze(Node *parseTree, const char *sourceText,
 
 	if (numParams > 0)
 		parse_fixed_parameters(pstate, paramTypes, numParams);
-	printf("analyze.c (94): parse_analyze %d\n", parseTree -> type);
 	query = transformStmt(pstate, parseTree);
 
 	free_parsestate(pstate);
@@ -159,7 +158,6 @@ Query *
 transformStmt(ParseState *pstate, Node *parseTree)
 {
 	Query	   *result;
-	printf("analyze.c (162): transformStmt\n");
 	switch (nodeTag(parseTree))
 	{
 			/*
@@ -180,7 +178,6 @@ transformStmt(ParseState *pstate, Node *parseTree)
 		case T_SelectStmt:
 			{
 				SelectStmt *n = (SelectStmt *) parseTree;
-				printf("analyze.c (183): transformStmt T_SelectStmt case %d\n", parseTree -> type);
 				if (n->valuesLists)
 					result = transformValuesClause(pstate, n);
 				else if (n->op == SETOP_NONE)
@@ -209,7 +206,6 @@ transformStmt(ParseState *pstate, Node *parseTree)
 			 * other statements don't require any transformation; just return
 			 * the original parsetree with a Query node plastered on top.
 			 */
-		  	printf("analyze.c (212): transformStmt default case %d\n", parseTree -> type);
 			result = makeNode(Query);
 			result->commandType = CMD_UTILITY;
 			result->utilityStmt = (Node *) parseTree;

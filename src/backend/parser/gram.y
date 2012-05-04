@@ -7271,7 +7271,6 @@ transaction_mode_list_or_empty:
 ViewStmt: CREATE OptTemp VIEW qualified_name opt_column_list
 				AS SelectStmt opt_check_option
 {
-    printf("gram.y 7273: ViewStmt detected\n");
 					ViewStmt *n = makeNode(ViewStmt);
 					n->view = $4;
 					n->view->relpersistence = $2;
@@ -7303,7 +7302,6 @@ MatViewStmt: CREATE OptTemp MATVIEW qualified_name opt_column_list
                     n->matView = $4;
                     n->matView->relpersistence = $2;
                     n->aliases = $5;
-		    // printf("gram.y 7305 selectstmt: %d\n", ((SelectStmt *)($9)) -> fromClause);
                     n->query = $7;
                     n->replace = false;
                     $$ = (Node *) n;
@@ -7315,7 +7313,6 @@ MatViewStmt: CREATE OptTemp MATVIEW qualified_name opt_column_list
                     n->matView = $6;
                     n->matView->relpersistence = $4;
                     n->aliases = $7;
-		    // printf("gram.y 7316 selectstmt: %d\n", $9-> type);
                     n->query = $9;
                     n->replace = true;
                     $$ = (Node *) n;

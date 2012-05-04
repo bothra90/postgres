@@ -145,7 +145,6 @@ heap_fill_tuple(TupleDesc tupleDesc,
 #ifdef USE_ASSERT_CHECKING
 	char	   *start = data;
 #endif
-
 	if (bit != NULL)
 	{
 		bitP = &bit[-1];
@@ -190,7 +189,8 @@ heap_fill_tuple(TupleDesc tupleDesc,
 		 */
 
 		if (att[i]->attbyval)
-		{
+		  {
+
 			/* pass-by-value */
 			data = (char *) att_align_nominal(data, att[i]->attalign);
 			store_att_byval(data, values[i], att[i]->attlen);
@@ -665,11 +665,12 @@ heap_form_tuple(TupleDesc tupleDescriptor,
 				 att[i]->attalign == 'd' &&
 				 att[i]->attndims == 0 &&
 				 !VARATT_IS_EXTENDED(DatumGetPointer(values[i])))
-		{
-			values[i] = toast_flatten_tuple_attribute(values[i],
-													  att[i]->atttypid,
-													  att[i]->atttypmod);
-		}
+		  {
+		    	
+		  values[i] = toast_flatten_tuple_attribute(values[i],
+							    att[i]->atttypid,
+							    att[i]->atttypmod);
+		  }
 	}
 
 	/*

@@ -123,6 +123,7 @@ CatalogIndexInsert(CatalogIndexState indstate, HeapTuple heapTuple)
 		 * FormIndexDatum fills in its values and isnull parameters with the
 		 * appropriate values for the column(s) of the index.
 		 */
+		// printf("indexing.c 126: %c\n", values[15]);
 		FormIndexDatum(indexInfo,
 					   slot,
 					   NULL,	/* no expression eval to do */
