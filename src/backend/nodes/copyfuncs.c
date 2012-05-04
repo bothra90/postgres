@@ -4275,7 +4275,8 @@ copyObject(void *from)
 		case T_AlterEnumStmt:
 			retval = _copyAlterEnumStmt(from);
 			break;
-		case T_ViewStmt:
+	case T_ViewStmt:
+	  printf("copyfuncs 93: Viewstmt\n");
 			retval = _copyViewStmt(from);
 			break;
 		case T_LoadStmt:

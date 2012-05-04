@@ -35,6 +35,7 @@
 
 static void checkMatViewTupleDesc(TupleDesc newdesc, TupleDesc olddesc);
 static bool isMatViewOnTempTable_walker(Node *node, void *context);
+// extern void getRelationDescription(StringInfo buffer, Oid relid);
 
 /*---------------------------------------------------------------------
  * isMatViewOnTempTable
@@ -260,7 +261,8 @@ DefineMaterializedVirtualRelation(const RangeVar *relation, List *tlist, bool re
 		 * is false).
 		 */
 		relid = DefineRelation(createStmt, RELKIND_MAT_VIEW, InvalidOid);
-		printf("relkind is: %c\n", RELKIND_MAT_VIEW);
+
+		printf("matview.c 263: Defined Relation for MatView\n");
 		Assert(relid != InvalidOid);
 		return relid;
 	}
@@ -426,11 +428,13 @@ DefineMatView(MatViewStmt *stmt, const char *queryString)
 	 * Since parse analysis scribbles on its input, copy the raw parse tree;
 	 * this ensures we don't corrupt a prepared statement, for example.
 	 */
-	printf("matview.c (428): DefineMatView called with \"%s\"\n", queryString);
-	ListCell * lc;
-	foreach(lc, ((SelectStmt *)(stmt -> query)) -> fromClause){
-	  printf("From Clause: %s\n", (char *) lc -> data.ptr_value);
-	}
+
+	/* 
+         * ListCell * lc;
+	 * foreach(lc, ((SelectStmt *)(stmt -> query)) -> fromClause){
+	 *   printf("From Clause: %s\n", (char *) lc -> data.ptr_value);
+	 * }
+         */
 	// Assert(1 == 0);
 	matViewParse = parse_analyze((Node *) copyObject(stmt->query),
 							  queryString, NULL, 0);
@@ -498,7 +502,9 @@ DefineMatView(MatViewStmt *stmt, const char *queryString)
 	 * long as the CREATE command is consistent with that --- no explicit
 	 * schema name.
 	 */
-	matView = copyObject(stmt->matView);  /* don't corrupt original command */
+
+	matView = copyObject(stmt->matView);  /* don't corrupt original command */	
+
 	if (matView->relpersistence == RELPERSISTENCE_PERMANENT
 		&& isMatViewOnTempTable(matViewParse))
 	{
@@ -518,9 +524,10 @@ DefineMatView(MatViewStmt *stmt, const char *queryString)
 	 * NOTE: if it already exists and replace is false, the xact will be
 	 * aborted.
 	 */
-	matViewOid = DefineMaterializedVirtualRelation(matView, matViewParse->targetList,
-									stmt->replace, namespaceId);
-
+	matViewOid = DefineMaterializedVirtualRelation(matView,
+						       matViewParse->targetList,
+						       stmt->replace,
+						       namespaceId);
 	/*
 	 * The relation we have just created is not visible to any other commands
 	 * running with the same transaction & command id. So, increment the
@@ -532,7 +539,7 @@ DefineMatView(MatViewStmt *stmt, const char *queryString)
 	 * The range table of 'viewParse' does not contain entries for the "OLD"
 	 * and "NEW" relations. So... add them!
 	 */
-	matViewParse = UpdateRangeTableOfMatViewParse(matViewOid, matViewParse);
+	// matViewParse = UpdateRangeTableOfMatViewParse(matViewOid, matViewParse);
 
 	/*
 	 * Now create the rules associated with the view.

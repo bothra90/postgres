@@ -209,6 +209,8 @@ index_insert(Relation indexRelation,
 									   (HeapTuple) NULL,
 									   InvalidBuffer);
 
+	// printf("indexam.c 212: %c\n", values[15]);
+
 	/*
 	 * have the am's insert proc do all the work.
 	 */

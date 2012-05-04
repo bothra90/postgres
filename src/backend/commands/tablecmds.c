@@ -408,7 +408,6 @@ DefineRelation(CreateStmt *stmt, char relkind, Oid ownerId)
   AttrNumber	attnum;
   static char *validnsps[] = HEAP_RELOPT_NAMESPACES;
   Oid			ofTypeId;
-  printf("tablecmds.c 411: relkind of %s here is: %c\n", stmt->relation->relname, relkind);
   /*
    * Truncate relname to appropriate length (probably a waste of time, as
    * parser should have done this already).
@@ -567,7 +566,6 @@ DefineRelation(CreateStmt *stmt, char relkind, Oid ownerId)
 	  descriptor->attrs[attnum - 1]->atthasdef = true;
 	}
     }
-  printf("tablecmds.c 570: relkind of %s here is: %c\n", stmt->relation->relname, relkind);
   /*
    * Create the relation.  Inherited defaults and constraints are passed in
    * for immediate handling --- since they don't need parsing, they can be
@@ -593,7 +591,6 @@ DefineRelation(CreateStmt *stmt, char relkind, Oid ownerId)
 					reloptions,
 					true,
 					allowSystemTableMods);
-
   /* Store inheritance information for new rel. */
   StoreCatalogInheritance(relationId, inheritOids);
 

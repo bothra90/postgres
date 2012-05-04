@@ -48,6 +48,7 @@
 #include "commands/user.h"
 #include "commands/vacuum.h"
 #include "commands/view.h"
+#include "commands/matview.h"
 #include "miscadmin.h"
 #include "parser/parse_utilcmd.h"
 #include "postmaster/bgwriter.h"
@@ -526,8 +527,8 @@ standard_ProcessUtility(Node *parsetree,
 
 						/* Create the table itself */
 						relOid = DefineRelation((CreateStmt *) stmt,
-												RELKIND_RELATION,
-												InvalidOid);
+									RELKIND_RELATION,
+									InvalidOid);
 
 						/*
 						 * Let AlterTableCreateToastTable decide if this one
@@ -918,12 +919,12 @@ standard_ProcessUtility(Node *parsetree,
 			// Define "DefineMatView"
 	case T_MatViewStmt:		/* CREATE VIEW */
 	  DefineMatView((ViewStmt *) parsetree, queryString);
+	  // getRelationDescription()
 	  break;
 
 		case T_CreateFunctionStmt:		/* CREATE FUNCTION */
 			CreateFunction((CreateFunctionStmt *) parsetree, queryString);
 			break;
-
 		case T_AlterFunctionStmt:		/* ALTER FUNCTION */
 			AlterFunction((AlterFunctionStmt *) parsetree);
 			break;

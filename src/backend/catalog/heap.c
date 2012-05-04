@@ -395,6 +395,7 @@ CheckAttributeNamesTypes(TupleDesc tupdesc, char relkind,
    * Skip this for a view or type relation, since those don't have system
    * attributes.
    */
+  //? To be checked
   if (relkind != RELKIND_VIEW && relkind != RELKIND_COMPOSITE_TYPE)
     {
       for (i = 0; i < natts; i++)
@@ -642,7 +643,6 @@ AddNewAttributeTuples(Oid new_rel_oid,
   int			natts = tupdesc->natts;
   ObjectAddress myself,
     referenced;
-
   /*
    * open pg_attribute and its indexes.
    */
@@ -753,7 +753,6 @@ InsertPgClassTuple(Relation pg_class_desc,
   /* This is a tad tedious, but way cleaner than what we used to do... */
   memset(values, 0, sizeof(values));
   memset(nulls, false, sizeof(nulls));
-  printf("heap.c 756: relkind is: %c\n", rd_rel->relkind);
   values[Anum_pg_class_relname - 1] = NameGetDatum(&rd_rel->relname);
   values[Anum_pg_class_relnamespace - 1] = ObjectIdGetDatum(rd_rel->relnamespace);
   values[Anum_pg_class_reltype - 1] = ObjectIdGetDatum(rd_rel->reltype);
@@ -788,12 +787,13 @@ InsertPgClassTuple(Relation pg_class_desc,
     nulls[Anum_pg_class_reloptions - 1] = true;
 
   tup = heap_form_tuple(RelationGetDescr(pg_class_desc), values, nulls);
-  printf("heap.c 756: relkind is: %c\n", values[Anum_pg_class_relkind - 1]);
+  int i = 0;
+
   /*
    * The new tuple must have the oid already chosen for the rel.	Sure would
    * be embarrassing to do this sort of thing in polite company.
    */
-  HeapTupleSetOid(tup, new_rel_oid);
+    HeapTupleSetOid(tup, new_rel_oid);
 
   /* finally insert the new tuple, update the indexes, and clean up */
   simple_heap_insert(pg_class_desc, tup);
@@ -879,6 +879,7 @@ AddNewRelationTuple(Relation pg_class_desc,
   new_rel_reltup->relkind = relkind;
 
   new_rel_desc->rd_att->tdtypeid = new_type_oid;
+
 
   /* Now build and insert the tuple */
   InsertPgClassTuple(pg_class_desc, new_rel_desc, new_rel_oid,
@@ -998,7 +999,6 @@ heap_create_with_catalog(const char *relname,
    * sanity checks
    */
   Assert(IsNormalProcessingMode() || IsBootstrapProcessingMode());
-  printf("heap.c 1000: heap_create_with_catalog relkind: %c\n", relkind);
   CheckAttributeNamesTypes(tupdesc, relkind, allow_system_table_mods);
 
   /*
@@ -1052,7 +1052,7 @@ heap_create_with_catalog(const char *relname,
       if (IsBinaryUpgrade &&
 	  OidIsValid(binary_upgrade_next_heap_pg_class_oid) &&
 	  (relkind == RELKIND_RELATION || relkind == RELKIND_SEQUENCE ||
-	   relkind == RELKIND_VIEW || relkind == RELKIND_COMPOSITE_TYPE ||
+	   relkind == RELKIND_MAT_VIEW || relkind == RELKIND_VIEW || relkind == RELKIND_COMPOSITE_TYPE ||
 	   relkind == RELKIND_FOREIGN_TABLE))
 	{
 	  relid = binary_upgrade_next_heap_pg_class_oid;
@@ -1138,7 +1138,6 @@ heap_create_with_catalog(const char *relname,
    * creating the same type name in parallel but hadn't committed yet when
    * we checked for a duplicate name above.
    */
-  printf("heap.c 1140: heap_create_with_catalog before adding new relationtype relkind: %c\n", relkind);
   new_type_oid = AddNewRelationType(relname,
 				    relnamespace,
 				    relid,
@@ -1198,6 +1197,7 @@ heap_create_with_catalog(const char *relname,
    * creating the same relation name in parallel but hadn't committed yet
    * when we checked for a duplicate name above.
    */
+
   AddNewRelationTuple(pg_class_desc,
 		      new_rel_desc,
 		      relid,
@@ -1213,6 +1213,7 @@ heap_create_with_catalog(const char *relname,
    */
   AddNewAttributeTuples(relid, new_rel_desc->rd_att, relkind,
 			oidislocal, oidinhcount);
+
 
   /*
    * Make a dependency link to force the relation to be deleted if its

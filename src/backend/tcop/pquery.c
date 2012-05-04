@@ -1151,7 +1151,6 @@ PortalRunUtility(Portal portal, Node *utilityStmt, bool isTopLevel,
 	bool		active_snapshot_set;
 
 	elog(DEBUG3, "ProcessUtility");
-	printf("pquery.c (1154): PortalRunUtility called\n");
 	/*
 	 * Set snapshot if utility stmt needs one.	Most reliable way to do this
 	 * seems to be to enumerate those that do not need one; this is a short
