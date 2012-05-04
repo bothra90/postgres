@@ -435,7 +435,8 @@ exec_command(const char *cmd,
 				success = describeTypes(pattern, show_verbose, show_system);
 				break;
 			case 't':
-			case 'v':
+		case 'v':
+		  case 'm':
 			case 'i':
 			case 's':
 			case 'E':

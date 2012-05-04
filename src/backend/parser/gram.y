@@ -4738,22 +4738,22 @@ DropStmt:	DROP drop_type IF_P EXISTS any_name_list opt_drop_behavior
 		;
 
 
-drop_type:	TABLE									{ $$ = OBJECT_TABLE; }
-			| SEQUENCE								{ $$ = OBJECT_SEQUENCE; }
-			| VIEW									{ $$ = OBJECT_VIEW; }
-            | MATVIEW								{ $$ = OBJECT_MAT_VIEW; }
-			| INDEX									{ $$ = OBJECT_INDEX; }
-			| FOREIGN TABLE							{ $$ = OBJECT_FOREIGN_TABLE; }
-			| TYPE_P								{ $$ = OBJECT_TYPE; }
-			| DOMAIN_P								{ $$ = OBJECT_DOMAIN; }
-			| COLLATION								{ $$ = OBJECT_COLLATION; }
-			| CONVERSION_P							{ $$ = OBJECT_CONVERSION; }
-			| SCHEMA								{ $$ = OBJECT_SCHEMA; }
-			| EXTENSION								{ $$ = OBJECT_EXTENSION; }
-			| TEXT_P SEARCH PARSER					{ $$ = OBJECT_TSPARSER; }
-			| TEXT_P SEARCH DICTIONARY				{ $$ = OBJECT_TSDICTIONARY; }
-			| TEXT_P SEARCH TEMPLATE				{ $$ = OBJECT_TSTEMPLATE; }
-			| TEXT_P SEARCH CONFIGURATION			{ $$ = OBJECT_TSCONFIGURATION; }
+drop_type:	TABLE					{ $$	= OBJECT_TABLE; }
+			| SEQUENCE			{ $$	= OBJECT_SEQUENCE; }
+			| VIEW				{ $$	= OBJECT_VIEW; }
+                        | MATVIEW			{ $$	= OBJECT_MAT_VIEW; }
+			| INDEX				{ $$	= OBJECT_INDEX; }
+			| FOREIGN TABLE			{ $$	= OBJECT_FOREIGN_TABLE; }
+			| TYPE_P			{ $$	= OBJECT_TYPE; }
+			| DOMAIN_P			{ $$	= OBJECT_DOMAIN; }
+			| COLLATION			{ $$	= OBJECT_COLLATION; }
+			| CONVERSION_P			{ $$	= OBJECT_CONVERSION; }
+			| SCHEMA			{ $$	= OBJECT_SCHEMA; }
+			| EXTENSION			{ $$	= OBJECT_EXTENSION; }
+			| TEXT_P SEARCH PARSER		{ $$	= OBJECT_TSPARSER; }
+			| TEXT_P SEARCH DICTIONARY	{ $$	= OBJECT_TSDICTIONARY; }
+			| TEXT_P SEARCH TEMPLATE	{ $$	= OBJECT_TSTEMPLATE; }
+			| TEXT_P SEARCH CONFIGURATION	{ $$	= OBJECT_TSCONFIGURATION; }
 		;
 
 any_name_list:

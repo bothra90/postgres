@@ -701,11 +701,11 @@ permissionsList(const char *pattern)
 	printfPQExpBuffer(&buf,
 					  "SELECT n.nspname as \"%s\",\n"
 					  "  c.relname as \"%s\",\n"
-					  "  CASE c.relkind WHEN 'r' THEN '%s' WHEN 'v' THEN '%s' WHEN 'S' THEN '%s' WHEN 'f' THEN '%s' END as \"%s\",\n"
+					  "  CASE c.relkind WHEN 'r' THEN '%s' WHEN 'v' THEN '%s' WHEN 'm' THEN '%s' WHEN 'S' THEN '%s' WHEN 'f' THEN '%s' END as \"%s\",\n"
 					  "  ",
 					  gettext_noop("Schema"),
 					  gettext_noop("Name"),
-	   gettext_noop("table"), gettext_noop("view"), gettext_noop("sequence"),
+	   gettext_noop("table"), gettext_noop("view"), gettext_noop("matview"), gettext_noop("sequence"),
 					  gettext_noop("foreign table"),
 					  gettext_noop("Type"));
 
@@ -2467,6 +2467,7 @@ listDbRoleSettings(const char *pattern, const char *pattern2)
  * tabtypes is an array of characters, specifying what info is desired:
  * t - tables
  * i - indexes
+ * m - matviews
  * v - views
  * s - sequences
  * E - foreign table (Note: different from 'f', the relkind value)
@@ -2479,16 +2480,17 @@ listTables(const char *tabtypes, const char *pattern, bool verbose, bool showSys
 	bool		showTables = strchr(tabtypes, 't') != NULL;
 	bool		showIndexes = strchr(tabtypes, 'i') != NULL;
 	bool		showViews = strchr(tabtypes, 'v') != NULL;
+	bool		showMatViews = strchr(tabtypes, 'm') != NULL;
 	bool		showSeq = strchr(tabtypes, 's') != NULL;
 	bool		showForeign = strchr(tabtypes, 'E') != NULL;
 
 	PQExpBufferData buf;
 	PGresult   *res;
 	printQueryOpt myopt = pset.popt;
-	static const bool translate_columns[] = {false, false, true, false, false, false, false};
+	static const bool translate_columns[] = {false, false, true, true, false, false, false, false}; // 4th value added as true
 
-	if (!(showTables || showIndexes || showViews || showSeq || showForeign))
-		showTables = showViews = showSeq = showForeign = true;
+	if (!(showTables || showIndexes || showViews || showSeq || showForeign || showMatViews))
+		showTables = showViews = showMatViews = showSeq = showForeign = true;
 
 	initPQExpBuffer(&buf);
 
@@ -2499,12 +2501,13 @@ listTables(const char *tabtypes, const char *pattern, bool verbose, bool showSys
 	printfPQExpBuffer(&buf,
 					  "SELECT n.nspname as \"%s\",\n"
 					  "  c.relname as \"%s\",\n"
-					  "  CASE c.relkind WHEN 'r' THEN '%s' WHEN 'v' THEN '%s' WHEN 'i' THEN '%s' WHEN 'S' THEN '%s' WHEN 's' THEN '%s' WHEN 'f' THEN '%s' END as \"%s\",\n"
+					  "  CASE c.relkind WHEN 'r' THEN '%s' WHEN 'v' THEN '%s' WHEN 'm' THEN '%s' WHEN 'i' THEN '%s' WHEN 'S' THEN '%s' WHEN 's' THEN '%s' WHEN 'f' THEN '%s' END as \"%s\",\n"
 					  "  pg_catalog.pg_get_userbyid(c.relowner) as \"%s\"",
 					  gettext_noop("Schema"),
 					  gettext_noop("Name"),
 					  gettext_noop("table"),
-					  gettext_noop("view"),
+			  gettext_noop("view"),
+			  gettext_noop("matview"),
 					  gettext_noop("index"),
 					  gettext_noop("sequence"),
 					  gettext_noop("special"),
@@ -2549,7 +2552,9 @@ listTables(const char *tabtypes, const char *pattern, bool verbose, bool showSys
 	if (showTables)
 		appendPQExpBuffer(&buf, "'r',");
 	if (showViews)
-		appendPQExpBuffer(&buf, "'v',");
+	  appendPQExpBuffer(&buf, "'v',");
+	if (showMatViews)
+	  appendPQExpBuffer(&buf, "'m',");
 	if (showIndexes)
 		appendPQExpBuffer(&buf, "'i',");
 	if (showSeq)
