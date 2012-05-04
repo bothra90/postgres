@@ -21,3 +21,5 @@ TODO
 
 
 - changing pg_class.h requires make clean and make
+- utility.c : 530,
+- view.c: 263

@@ -493,7 +493,9 @@ DefineView(ViewStmt *stmt, const char *queryString)
 	 * long as the CREATE command is consistent with that --- no explicit
 	 * schema name.
 	 */
+    printf("view.c:496 Node tag for stmt: %d\n",stmt->type);
 	view = copyObject(stmt->view);  /* don't corrupt original command */
+    printf("view.c:498 Node tag for view: %d\n",view->type);
 	if (view->relpersistence == RELPERSISTENCE_PERMANENT
 		&& isViewOnTempTable(viewParse))
 	{
@@ -528,6 +530,7 @@ DefineView(ViewStmt *stmt, const char *queryString)
 	 * and "NEW" relations. So... add them!
 	 */
 	viewParse = UpdateRangeTableOfViewParse(viewOid, viewParse);
+    printf("Nodetag for view:%d\n",viewParse->type);
 
 	/*
 	 * Now create the rules associated with the view.

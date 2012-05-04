@@ -697,7 +697,6 @@ DropErrorMsgWrongType(const char *relname, char wrongkind, char rightkind)
 void
 RemoveRelations(DropStmt *drop)
 {
-<<<<<<< HEAD
 	ObjectAddresses *objects;
 	char		relkind;
 	ListCell   *cell;

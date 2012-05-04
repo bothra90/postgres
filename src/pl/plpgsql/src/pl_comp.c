@@ -1725,7 +1725,8 @@ plpgsql_parse_cwordtype(List *idents)
 	 */
 	if (classStruct->relkind != RELKIND_RELATION &&
 		classStruct->relkind != RELKIND_SEQUENCE &&
-		classStruct->relkind != RELKIND_VIEW &&
+        classStruct->relkind != RELKIND_VIEW &&
+		classStruct->relkind != RELKIND_MAT_VIEW &&
 		classStruct->relkind != RELKIND_COMPOSITE_TYPE &&
 		classStruct->relkind != RELKIND_FOREIGN_TABLE)
 		goto done;
@@ -1951,7 +1952,8 @@ build_row_from_class(Oid classOid)
 	/* accept relation, sequence, view, composite type, or foreign table */
 	if (classStruct->relkind != RELKIND_RELATION &&
 		classStruct->relkind != RELKIND_SEQUENCE &&
-		classStruct->relkind != RELKIND_VIEW &&
+        classStruct->relkind != RELKIND_VIEW &&
+		classStruct->relkind != RELKIND_MAT_VIEW &&
 		classStruct->relkind != RELKIND_COMPOSITE_TYPE &&
 		classStruct->relkind != RELKIND_FOREIGN_TABLE)
 		ereport(ERROR,
