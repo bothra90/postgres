@@ -453,6 +453,7 @@ pg_get_viewdef_worker(Oid viewoid, int prettyFlags)
 	/*
 	 * Get the pg_rewrite tuple for the view's SELECT rule
 	 */
+	printf("Say what?\n");
 	args[0] = ObjectIdGetDatum(viewoid);
 	args[1] = PointerGetDatum(ViewSelectRuleName);
 	nulls[0] = ' ';

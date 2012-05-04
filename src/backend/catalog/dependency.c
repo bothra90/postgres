@@ -2887,6 +2887,9 @@ getRelationDescription(StringInfo buffer, Oid relid)
 		case RELKIND_VIEW:
 			appendStringInfo(buffer, _("view %s"),
 							 relname);
+		case RELKIND_MAT_VIEW:
+			appendStringInfo(buffer, _("matview %s"),
+							 relname);
 			break;
 		case RELKIND_COMPOSITE_TYPE:
 			appendStringInfo(buffer, _("composite type %s"),

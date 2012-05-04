@@ -396,6 +396,11 @@ DefineQueryRewrite(char *rulename,
 			rulename = pstrdup(ViewSelectRuleName);
 		}
 
+		if (strcmp(rulename, MatViewSelectRuleName) != 0)
+		{
+		  rulename = pstrdup(MatViewSelectRuleName);
+		}
+		
 		/*
 		 * Are we converting a relation to a view?
 		 *

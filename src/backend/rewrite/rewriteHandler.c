@@ -1597,6 +1597,7 @@ fireRIRrules(Query *parsetree, List *activeRIRs, bool forUpdatePushedDown)
 			continue;
 		}
 		locks = NIL;
+		printf("rewriteHandler 1600: rules -> numLocks %d\n", rules -> numLocks);
 		for (i = 0; i < rules->numLocks; i++)
 		{
 			rule = rules->rules[i];
