@@ -20,6 +20,7 @@
 #include "commands/defrem.h"
 #include "commands/tablecmds.h"
 #include "commands/matview.h"
+#include "executor/execdesc.h"
 #include "miscadmin.h"
 #include "nodes/makefuncs.h"
 #include "nodes/nodeFuncs.h"
@@ -330,7 +331,8 @@ DefineMatViewRules(Oid matViewOid, Query *matViewParse, bool replace)
 	 * Set up the ON SELECT rule.  Since the query has already been through
 	 * parse analysis, we use DefineQueryRewrite() directly.
 	 */
-	DefineQueryRewrite(pstrdup(MatViewSelectRuleName),
+  // Rule should be changed here. But changing it causes error. Hence not done as of yet.
+	DefineQueryRewrite(pstrdup(ViewSelectRuleName),
 					   matViewOid,
 					   NULL,
 					   CMD_SELECT,
@@ -435,9 +437,10 @@ DefineMatView(MatViewStmt *stmt, const char *queryString)
 	 * }
          */
 	// Assert(1 == 0);
+	printf("matview.c 439: calling parse_analyze\n");
 	matViewParse = parse_analyze((Node *) copyObject(stmt->query),
 							  queryString, NULL, 0);
-
+	printf("matview.c 442: parse_analyze call ended\n");
 	/*
 	 * The grammar should ensure that the result is a single SELECT Query.
 	 */
@@ -458,6 +461,7 @@ DefineMatView(MatViewStmt *stmt, const char *queryString)
 		ereport(ERROR,
 				(errcode(ERRCODE_FEATURE_NOT_SUPPORTED),
 		errmsg("mat views must not contain data-modifying statements in WITH")));
+
 
 	/*
 	 * If a list of column names was given, run through and insert these into
@@ -488,6 +492,7 @@ DefineMatView(MatViewStmt *stmt, const char *queryString)
 					 errmsg("CREATE MAT VIEW specifies more column "
 							"names than columns")));
 	}
+	printf("matview.c 492:\n");
 
 	/* Unlogged views are not sensible. */
 	if (stmt->matView->relpersistence == RELPERSISTENCE_UNLOGGED)
@@ -503,16 +508,18 @@ DefineMatView(MatViewStmt *stmt, const char *queryString)
 	 */
 
 	matView = copyObject(stmt->matView);  /* don't corrupt original command */	
-
+	printf("matview.c 508:\n");
 	if (matView->relpersistence == RELPERSISTENCE_PERMANENT
 		&& isMatViewOnTempTable(matViewParse))
-	{
+	  {
+		printf("matview.c 512: Inside\n");
 		matView->relpersistence = RELPERSISTENCE_TEMP;
+		printf("matview.c 512: Giving Error\n");
 		ereport(NOTICE,
 				(errmsg("view \"%s\" will be a temporary view",
 						matView->relname)));
 	}
-
+	printf("matview.c 517:\n");
 	/* Might also need to make it temporary if placed in temp schema. */
 	namespaceId = RangeVarGetCreationNamespace(matView);
 	RangeVarAdjustRelationPersistence(matView, namespaceId);
@@ -523,10 +530,50 @@ DefineMatView(MatViewStmt *stmt, const char *queryString)
 	 * NOTE: if it already exists and replace is false, the xact will be
 	 * aborted.
 	 */
+	printf("matview.c 527: Calling DefineMaterializedVirtualRelation\n");
 	matViewOid = DefineMaterializedVirtualRelation(matView,
 						       matViewParse->targetList,
 						       stmt->replace,
-						       namespaceId);
+												   namespaceId);
+
+	/*Unclear bisiness begins 
+	PlannedStmt * PlannedMatViewParse;
+	PlannedMatViewParse = pg_plan_query(matViewParse, 0, NULL);
+	printf("matview.c 532: DefineMaterializedVirtualRelation returned\n");
+
+	QueryDesc *queryDesc = CreateQueryDesc(PlannedMatViewParse,
+										   queryString,
+										   GetActiveSnapshot(),
+										   InvalidSnapshot,
+										   None_Receiver, NULL, 0);
+
+	queryDesc->dest = CreateDestReceiver(DestIntoRel);
+
+	CmdType		operation;
+	bool		sendTuples;
+	DestReceiver *dest;
+ 
+	operation = queryDesc->operation;
+	dest = queryDesc->dest;
+	sendTuples = (operation == CMD_SELECT ||
+				  queryDesc->plannedstmt->hasReturning);
+
+	if (sendTuples)
+		(*dest->rStartup) (dest, operation, queryDesc->tupDesc);
+
+	if (!ScanDirectionIsNoMovement(ForwardScanDirection))
+		ExecutePlan(estate,
+					queryDesc->planstate,
+					operation,
+					sendTuples,
+					count,
+					direction,
+					dest);
+
+	if (sendTuples)
+		(*dest->rShutdown) (dest);
+
+	/*Unclear bisiness ends*/ 
 	/*
 	 * The relation we have just created is not visible to any other commands
 	 * running with the same transaction & command id. So, increment the
@@ -544,4 +591,5 @@ DefineMatView(MatViewStmt *stmt, const char *queryString)
 	 * Now create the rules associated with the view.
 	 */
 	DefineMatViewRules(matViewOid, matViewParse, stmt->replace);
+	printf("MatView defined\n");
 }

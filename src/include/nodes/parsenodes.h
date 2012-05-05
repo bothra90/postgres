@@ -113,7 +113,7 @@ typedef struct Query
 
   IntoClause *intoClause;		/* target for SELECT INTO / CREATE TABLE AS */
 
-  int relOrMatView; /* Added to accomodate matview processing as "select ... into ..." */  
+  // int relOrMatView; /* Added to accomodate matview processing as "select ... into ..." */  
 
 	bool		hasAggs;		/* has aggregates in tlist or havingQual */
 	bool		hasWindowFuncs; /* has window functions in tlist */
