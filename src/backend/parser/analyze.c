@@ -176,7 +176,8 @@ transformStmt(ParseState *pstate, Node *parseTree)
 			break;
 
 		case T_SelectStmt:
-			{
+		  {
+			printf("analyze.c 180: transformStmt Select case\n");
 				SelectStmt *n = (SelectStmt *) parseTree;
 				if (n->valuesLists)
 					result = transformValuesClause(pstate, n);
@@ -201,7 +202,7 @@ transformStmt(ParseState *pstate, Node *parseTree)
 			break;
 
 		default:
-
+		  printf("analyze.c 204 : transformStmt default case\n");
 			/*
 			 * other statements don't require any transformation; just return
 			 * the original parsetree with a Query node plastered on top.

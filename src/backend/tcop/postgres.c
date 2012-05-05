@@ -574,7 +574,7 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 {
 	Query	   *query;
 	List	   *querytree_list;
-
+	printf("postgres.c 577: pg_analyze_and_rewrite node type %d\n", parsetree -> type);
 	TRACE_POSTGRESQL_QUERY_REWRITE_START(query_string);
 
 	/*
@@ -584,7 +584,7 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 		ResetUsage();
 
 	query = parse_analyze(parsetree, query_string, paramTypes, numParams);
-
+	printf("postgres.c 587: pg_analyze_and_rewrite query command type returned by parse_analyze %d\n", query -> commandType);
 	if (log_parser_stats)
 		ShowUsage("PARSE ANALYSIS STATISTICS");
 
@@ -592,6 +592,7 @@ pg_analyze_and_rewrite(Node *parsetree, const char *query_string,
 	 * (2) Rewrite the queries, as necessary
 	 */
 	querytree_list = pg_rewrite_query(query);
+	printf("postgres.c 595: pg_analyze_and_rewrite size of query list returned by parse_analyze %d\n", length(querytree_list));
 
 	TRACE_POSTGRESQL_QUERY_REWRITE_DONE(query_string);
 
@@ -773,12 +774,15 @@ pg_plan_queries(List *querytrees, int cursorOptions, ParamListInfo boundParams)
 		Node	   *stmt;
 
 		if (query->commandType == CMD_UTILITY)
-		{
+		  {
+			printf("postgres.c 778: pg_plan_queries Utility Query, hence no plans\n");
 			/* Utility commands have no plans. */
 			stmt = query->utilityStmt;
 		}
 		else
-		{
+		  {
+			printf("postgres.c 778: pg_plan_queries Not Utility Query, planning\n");
+
 			stmt = (Node *) pg_plan_query(query, cursorOptions, boundParams);
 		}
 
@@ -966,6 +970,7 @@ exec_simple_query(const char *query_string)
 		 * we are passing here is in MessageContext, which will outlive the
 		 * portal anyway.
 		 */
+		printf("postgres.c 973: exec_simple_query Defining portal\n");
 		PortalDefineQuery(portal,
 						  NULL,
 						  query_string,
@@ -1004,8 +1009,10 @@ exec_simple_query(const char *query_string)
 		 * Now we can create the destination receiver object.
 		 */
 		receiver = CreateDestReceiver(dest);
-		if (dest == DestRemote)
-			SetRemoteDestReceiverParams(receiver, portal);
+		if (dest == DestRemote){
+		  printf("postgres.c 1013: Remote Destination\n");
+		  SetRemoteDestReceiverParams(receiver, portal);
+		}
 
 		/*
 		 * Switch back to transaction context for execution.
@@ -1021,11 +1028,11 @@ exec_simple_query(const char *query_string)
 						 receiver,
 						 receiver,
 						 completionTag);
-
+		printf("portal run finished\n");
 		(*receiver->rDestroy) (receiver);
 
 		PortalDrop(portal, false);
-
+		printf("portal dropped\n");
 		if (IsA(parsetree, TransactionStmt))
 		{
 			/*

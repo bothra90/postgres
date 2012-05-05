@@ -111,7 +111,9 @@ typedef struct Query
 	int			resultRelation; /* rtable index of target relation for
 								 * INSERT/UPDATE/DELETE; 0 for SELECT */
 
-	IntoClause *intoClause;		/* target for SELECT INTO / CREATE TABLE AS */
+  IntoClause *intoClause;		/* target for SELECT INTO / CREATE TABLE AS */
+
+  int relOrMatView; /* Added to accomodate matview processing as "select ... into ..." */  
 
 	bool		hasAggs;		/* has aggregates in tlist or havingQual */
 	bool		hasWindowFuncs; /* has window functions in tlist */

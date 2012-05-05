@@ -50,7 +50,8 @@ typedef struct QueryDesc
 	PlanState  *planstate;		/* tree of per-plan-node state */
 
 	/* This is always set NULL by the core system, but plugins can change it */
-	struct Instrumentation *totaltime;	/* total time spent in ExecutorRun */
+  struct Instrumentation *totaltime;	/* total time spent in ExecutorRun */
+  int relOrMatView;
 } QueryDesc;
 
 /* in pquery.c */

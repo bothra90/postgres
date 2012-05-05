@@ -272,7 +272,8 @@ ChoosePortalStrategy(List *stmts)
 				}
 				if (query->commandType == CMD_UTILITY &&
 					query->utilityStmt != NULL)
-				{
+				  {
+					printf("pquery.c 276: ChoosePortalStrategy CMD_UTILITY");
 					if (UtilityReturnsTuples(query->utilityStmt))
 						return PORTAL_UTIL_SELECT;
 					/* it can't be ONE_RETURNING, so give up */
@@ -490,14 +491,14 @@ PortalStart(Portal portal, ParamListInfo params, Snapshot snapshot)
 		 * Determine the portal execution strategy
 		 */
 		portal->strategy = ChoosePortalStrategy(portal->stmts);
-
+		printf("pquery.c 494: portal strategy chosen is %d\n", portal -> strategy);
 		/*
 		 * Fire her up according to the strategy
 		 */
 		switch (portal->strategy)
 		{
 			case PORTAL_ONE_SELECT:
-
+			  printf("pquery.c 500: portal_one_select case\n");
 				/* Must set snapshot before starting executor. */
 				if (snapshot)
 					PushActiveSnapshot(snapshot);
@@ -752,6 +753,7 @@ PortalRun(Portal portal, long count, bool isTopLevel,
 	 * CurrentMemoryContext has a similar problem, but the other pointers we
 	 * save here will be NULL or pointing to longer-lived objects.
 	 */
+	printf("pquery.c 756: Running portal now\n");
 	saveTopTransactionResourceOwner = TopTransactionResourceOwner;
 	saveTopTransactionContext = TopTransactionContext;
 	saveActivePortal = ActivePortal;
@@ -809,7 +811,8 @@ PortalRun(Portal portal, long count, bool isTopLevel,
 				result = portal->atEnd;
 				break;
 
-			case PORTAL_MULTI_QUERY:
+		case PORTAL_MULTI_QUERY:
+		  printf("pquery.c 815: PortalRun PORTAL_MULTI_QUERY case Calling PortalRunMulti\n");
 				PortalRunMulti(portal, isTopLevel,
 							   dest, altdest, completionTag);
 
@@ -1244,7 +1247,8 @@ PortalRunMulti(Portal portal, bool isTopLevel,
 
 		if (IsA(stmt, PlannedStmt) &&
 			((PlannedStmt *) stmt)->utilityStmt == NULL)
-		{
+		  {
+			printf("pquery.c 1249: PortalRunMulti Processing plannable query.\n");
 			/*
 			 * process a plannable query.
 			 */
@@ -1278,7 +1282,8 @@ PortalRunMulti(Portal portal, bool isTopLevel,
 							 dest, completionTag);
 			}
 			else
-			{
+			  {
+				printf("pquery.c 1284: PortalRunMulti callng ProcessQuery.\n");
 				/* stmt added by rewrite cannot set tag */
 				ProcessQuery(pstmt,
 							 portal->sourceText,
@@ -1311,8 +1316,10 @@ PortalRunMulti(Portal portal, bool isTopLevel,
 			{
 				Assert(!active_snapshot_set);
 				/* statement can set tag string */
+				printf("pquery.c 1249: PortalRunMulti calling PortalRunUtility.\n");
 				PortalRunUtility(portal, stmt, isTopLevel,
 								 dest, completionTag);
+				printf("pquery.c 1249: PortalRunMulti call of PortalRunUtility finished.\n");
 			}
 			else
 			{

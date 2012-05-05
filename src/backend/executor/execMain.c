@@ -122,6 +122,7 @@ static void intorel_destroy(DestReceiver *self);
 void
 ExecutorStart(QueryDesc *queryDesc, int eflags)
 {
+  printf("execMain.c 125: ExecutorStart called\n");
 	if (ExecutorStart_hook)
 		(*ExecutorStart_hook) (queryDesc, eflags);
 	else
