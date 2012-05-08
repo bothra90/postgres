@@ -383,7 +383,7 @@ ExplainOnePlan(PlannedStmt *plannedstmt, ExplainState *es,
 		eflags = EXEC_FLAG_EXPLAIN_ONLY;
 
 	/* call ExecutorStart to prepare the plan for execution */
-	ExecutorStart(queryDesc, eflags);
+	ExecutorStart(queryDesc, eflags, 'r');
 
 	/* Execute the plan for statistics if asked for */
 	if (es->analyze)

@@ -1234,7 +1234,7 @@ BeginCopy(bool is_from,
 		 *
 		 * ExecutorStart computes a result tupdesc for us
 		 */
-		ExecutorStart(cstate->queryDesc, 0);
+		ExecutorStart(cstate->queryDesc, 0, 'r');
 
 		tupDesc = cstate->queryDesc->tupDesc;
 	}

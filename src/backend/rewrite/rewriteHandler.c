@@ -1390,7 +1390,7 @@ ApplyRetrieveRule(Query *parsetree,
 	 * checks will actually be done against the OLD entry therein.
 	 */
 	subrte = rt_fetch(PRS2_OLD_VARNO, rule_action->rtable);
-    printf("rewriteHandler.c:1393 Subrte->relid-> %d, Relation->\
+	printf("rewriteHandler.c:1393 Subrte->relid-> %d, Relation->\
             rd_id->%d\n",subrte->relid,relation->rd_id);
 	Assert(subrte->relid == relation->rd_id);
 	subrte->requiredPerms = rte->requiredPerms;

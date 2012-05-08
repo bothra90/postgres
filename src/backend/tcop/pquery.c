@@ -179,7 +179,7 @@ ProcessQuery(PlannedStmt *plan,
 	/*
 	 * Call ExecutorStart to prepare the plan for execution
 	 */
-	ExecutorStart(queryDesc, 0);
+	ExecutorStart(queryDesc, 0, 'r');
 
 	/*
 	 * Run the plan to completion.
@@ -529,7 +529,7 @@ PortalStart(Portal portal, ParamListInfo params, Snapshot snapshot)
 				/*
 				 * Call ExecutorStart to prepare the plan for execution
 				 */
-				ExecutorStart(queryDesc, eflags);
+				ExecutorStart(queryDesc, eflags, 'r');
 
 				/*
 				 * This tells PortalCleanup to shut down the executor

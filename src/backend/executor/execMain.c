@@ -73,7 +73,7 @@ ExecutorEnd_hook_type ExecutorEnd_hook = NULL;
 ExecutorCheckPerms_hook_type ExecutorCheckPerms_hook = NULL;
 
 /* decls for local routines only used within this module */
-static void InitPlan(QueryDesc *queryDesc, int eflags);
+static void InitPlan(QueryDesc *queryDesc, int eflags, char relOrMat);
 static void CheckValidRowMarkRel(Relation rel, RowMarkType markType);
 static void ExecPostprocessPlan(EState *estate);
 static void ExecEndPlan(PlanState *planstate, EState *estate);
@@ -87,7 +87,7 @@ static bool ExecCheckRTEPerms(RangeTblEntry *rte);
 static void ExecCheckXactReadOnly(PlannedStmt *plannedstmt);
 static void EvalPlanQualStart(EPQState *epqstate, EState *parentestate,
 				  Plan *planTree);
-static void OpenIntoRel(QueryDesc *queryDesc);
+static void OpenIntoRel(QueryDesc *queryDesc, char relOrMat);
 static void CloseIntoRel(QueryDesc *queryDesc);
 static void intorel_startup(DestReceiver *self, int operation, TupleDesc typeinfo);
 static void intorel_receive(TupleTableSlot *slot, DestReceiver *self);
@@ -120,17 +120,17 @@ static void intorel_destroy(DestReceiver *self);
  * ----------------------------------------------------------------
  */
 void
-ExecutorStart(QueryDesc *queryDesc, int eflags)
+ExecutorStart(QueryDesc *queryDesc, int eflags, char relOrMat)
 {
   printf("execMain.c 125: ExecutorStart called\n");
 	if (ExecutorStart_hook)
 		(*ExecutorStart_hook) (queryDesc, eflags);
 	else
-		standard_ExecutorStart(queryDesc, eflags);
+		standard_ExecutorStart(queryDesc, eflags, relOrMat);
 }
 
 void
-standard_ExecutorStart(QueryDesc *queryDesc, int eflags)
+standard_ExecutorStart(QueryDesc *queryDesc, int eflags, char relOrMat)
 {
 	EState	   *estate;
 	MemoryContext oldcontext;
@@ -213,7 +213,7 @@ standard_ExecutorStart(QueryDesc *queryDesc, int eflags)
 	/*
 	 * Initialize the plan state tree
 	 */
-	InitPlan(queryDesc, eflags);
+	InitPlan(queryDesc, eflags, relOrMat);
 
 	/*
 	 * Set up an AFTER-trigger statement context, unless told not to, or
@@ -733,7 +733,7 @@ ExecCheckXactReadOnly(PlannedStmt *plannedstmt)
  * ----------------------------------------------------------------
  */
 static void
-InitPlan(QueryDesc *queryDesc, int eflags)
+InitPlan(QueryDesc *queryDesc, int eflags, char relOrMat)
 {
 	CmdType		operation = queryDesc->operation;
 	PlannedStmt *plannedstmt = queryDesc->plannedstmt;
@@ -968,7 +968,7 @@ InitPlan(QueryDesc *queryDesc, int eflags)
 	 * If EXPLAIN, skip creating the "into" relation.
 	 */
 	if (estate->es_select_into && !(eflags & EXEC_FLAG_EXPLAIN_ONLY))
-		OpenIntoRel(queryDesc);
+		OpenIntoRel(queryDesc, relOrMat);
 }
 
 /*
@@ -2386,7 +2386,7 @@ typedef struct
  * been placed in queryDesc->tupDesc.
  */
 static void
-OpenIntoRel(QueryDesc *queryDesc)
+OpenIntoRel(QueryDesc *queryDesc, char relOrMat)
 {
 	IntoClause *into = queryDesc->plannedstmt->intoClause;
 	EState	   *estate = queryDesc->estate;
@@ -2468,7 +2468,7 @@ OpenIntoRel(QueryDesc *queryDesc)
 									 validnsps,
 									 true,
 									 false);
-	(void) heap_reloptions(RELKIND_RELATION, reloptions, true);
+	(void) heap_reloptions(relOrMat, reloptions, true);
 
 	/* Copy the tupdesc because heap_create_with_catalog modifies it */
 	tupdesc = CreateTupleDescCopy(queryDesc->tupDesc);
@@ -2483,7 +2483,7 @@ OpenIntoRel(QueryDesc *queryDesc)
 											  GetUserId(),
 											  tupdesc,
 											  NIL,
-											  RELKIND_RELATION,
+											  relOrMat,
 											  into->rel->relpersistence,
 											  false,
 											  false,

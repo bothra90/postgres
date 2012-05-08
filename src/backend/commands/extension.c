@@ -739,7 +739,7 @@ execute_sql_string(const char *sql, const char *filename)
 										GetActiveSnapshot(), NULL,
 										dest, NULL, 0);
 
-				ExecutorStart(qdesc, 0);
+				ExecutorStart(qdesc, 0, 'r');
 				ExecutorRun(qdesc, ForwardScanDirection, 0);
 				ExecutorFinish(qdesc);
 				ExecutorEnd(qdesc);

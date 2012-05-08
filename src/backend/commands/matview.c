@@ -98,14 +98,14 @@ isMatViewOnTempTable_walker(Node *node, void *context)
  *---------------------------------------------------------------------
  */
 static Oid
-DefineMaterializedVirtualRelation(const RangeVar *relation, List *tlist, bool replace,
+DefineMaterializedVirtualRelation(const RangeVar *relation, Query * matViewParse, bool replace,
 					  Oid namespaceId)
 {
 	Oid			matViewOid;
 	CreateStmt *createStmt = makeNode(CreateStmt);
 	List	   *attrList;
 	ListCell   *t;
-
+	List *tlist = matViewParse -> targetList;
 	/*
 	 * create a list of ColumnDef nodes based on the names and types of the
 	 * (non-junk) targetlist items from the matView's SELECT list.
@@ -247,24 +247,52 @@ DefineMaterializedVirtualRelation(const RangeVar *relation, List *tlist, bool re
 		 * now set the parameters for keys/inheritance etc. All of these are
 		 * uninteresting for mat views...
 		 */
-		createStmt->relation = (RangeVar *) relation;
-		createStmt->tableElts = attrList;
-		createStmt->inhRelations = NIL;
-		createStmt->constraints = NIL;
-		createStmt->options = list_make1(defWithOids(false));
-		createStmt->oncommit = ONCOMMIT_NOOP;
-		createStmt->tablespacename = NULL;
-		createStmt->if_not_exists = false;
+		/* 
+         * createStmt->relation = (RangeVar *) relation;
+		 * createStmt->tableElts = attrList;
+		 * createStmt->inhRelations = NIL;
+		 * createStmt->constraints = NIL;
+		 * createStmt->options = list_make1(defWithOids(false));
+		 * createStmt->oncommit = ONCOMMIT_NOOP;
+		 * createStmt->tablespacename = NULL;
+		 * createStmt->if_not_exists = false;
+         */
+
+		matViewParse -> intoClause = makeNode(IntoClause);
+		matViewParse -> intoClause -> rel = (RangeVar *) relation;
+		matViewParse -> intoClause -> colNames = attrList;
+		matViewParse -> intoClause -> options = NULL;
+		matViewParse -> intoClause -> onCommit = ONCOMMIT_NOOP;
+		matViewParse -> intoClause -> tableSpaceName = NULL;
+
+		PlannedStmt * plannedMatViewParse;
+		plannedMatViewParse = pg_plan_query(matViewParse, 0, NULL);
+		QueryDesc  *qdesc;
+		DestReceiver *dest;
+		dest = CreateDestReceiver(DestNone);
+		qdesc = CreateQueryDesc((PlannedStmt *) plannedMatViewParse,
+								NULL,
+								GetActiveSnapshot(), NULL,
+								dest, NULL, 0);
+		
+		ExecutorStart(qdesc, 0, 'm');
+		ExecutorRun(qdesc, ForwardScanDirection, 0);
+		ExecutorFinish(qdesc);
+		ExecutorEnd(qdesc);
+	
+		FreeQueryDesc(qdesc);
 
 		/*
 		 * finally create the relation (this will error out if there's an
 		 * existing mat view, so we don't need more code to complain if "replace"
 		 * is false).
 		 */
-		relid = DefineRelation(createStmt, RELKIND_MAT_VIEW, InvalidOid);
+		relid = get_relname_relid(relation->relname, namespaceId);
+		// relid = DefineRelation(createStmt, RELKIND_MAT_VIEW, InvalidOid);
 
 		printf("matview.c 263: Defined Relation for MatView\n");
 		Assert(relid != InvalidOid);
+		
 		return relid;
 	}
 }
@@ -532,9 +560,10 @@ DefineMatView(MatViewStmt *stmt, const char *queryString)
 	 */
 	printf("matview.c 527: Calling DefineMaterializedVirtualRelation\n");
 	matViewOid = DefineMaterializedVirtualRelation(matView,
-						       matViewParse->targetList,
+						       matViewParse,
 						       stmt->replace,
-												   namespaceId);
+						       namespaceId);
+
 
 	/*Unclear bisiness begins 
 	PlannedStmt * PlannedMatViewParse;
@@ -590,6 +619,7 @@ DefineMatView(MatViewStmt *stmt, const char *queryString)
 	/*
 	 * Now create the rules associated with the view.
 	 */
-	DefineMatViewRules(matViewOid, matViewParse, stmt->replace);
+	matViewParse -> intoClause = NULL;
+	// DefineMatViewRules(matViewOid, matViewParse, stmt->replace);
 	printf("MatView defined\n");
 }

@@ -2105,7 +2105,7 @@ _SPI_pquery(QueryDesc *queryDesc, bool fire_triggers, long tcount)
 	else
 		eflags = EXEC_FLAG_SKIP_TRIGGERS;
 
-	ExecutorStart(queryDesc, eflags);
+	ExecutorStart(queryDesc, eflags, 'r');
 
 	ExecutorRun(queryDesc, ForwardScanDirection, tcount);
 

@@ -163,8 +163,8 @@ extern TupleTableSlot *ExecFilterJunk(JunkFilter *junkfilter,
 /*
  * prototypes from functions in execMain.c
  */
-extern void ExecutorStart(QueryDesc *queryDesc, int eflags);
-extern void standard_ExecutorStart(QueryDesc *queryDesc, int eflags);
+extern void ExecutorStart(QueryDesc *queryDesc, int eflags, char relOrMat);
+extern void standard_ExecutorStart(QueryDesc *queryDesc, int eflags, char relOrMat);
 extern void ExecutorRun(QueryDesc *queryDesc,
 			ScanDirection direction, long count);
 extern void standard_ExecutorRun(QueryDesc *queryDesc,
